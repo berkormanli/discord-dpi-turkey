@@ -1,0 +1,132 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v2.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.10'
+          cache: true
+
+      - name: Install dependencies for Linux build
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev xorg-dev
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build for Windows (amd64)
+        env:
+          GOOS: windows
+          GOARCH: amd64
+          CGO_ENABLED: '1'
+        run: |
+          # Install mingw-w64 for cross-compilation
+          sudo apt-get install -y gcc-mingw-w64-x86-64
+          export CC=x86_64-w64-mingw32-gcc
+          go build -ldflags="-s -w -X main.AppVersion=${{ steps.version.outputs.version }}" -o splitwire-turkey-windows-amd64.exe
+
+      - name: Build for Linux (amd64)
+        env:
+          GOOS: linux
+          GOARCH: amd64
+          CGO_ENABLED: '1'
+        run: |
+          go build -ldflags="-s -w -X main.AppVersion=${{ steps.version.outputs.version }}" -o splitwire-turkey-linux-amd64
+
+      - name: Build for macOS (arm64 - Apple Silicon)
+        env:
+          GOOS: darwin
+          GOARCH: arm64
+          CGO_ENABLED: '1'
+        run: |
+          # Install macOS cross-compilation tools
+          sudo apt-get install -y clang llvm
+          export CC=clang
+          go build -ldflags="-s -w -X main.AppVersion=${{ steps.version.outputs.version }}" -o splitwire-turkey-darwin-arm64
+
+      - name: Create checksums
+        run: |
+          sha256sum splitwire-turkey-windows-amd64.exe > checksums.txt
+          sha256sum splitwire-turkey-linux-amd64 >> checksums.txt
+          sha256sum splitwire-turkey-darwin-arm64 >> checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            splitwire-turkey-windows-amd64.exe
+            splitwire-turkey-linux-amd64
+            splitwire-turkey-darwin-arm64
+            checksums.txt
+          body: |
+            ## SplitWire-Turkey ${{ steps.version.outputs.version }}
+            
+            ### Downloads
+            
+            - **Windows (64-bit)**: `splitwire-turkey-windows-amd64.exe`
+            - **Linux (64-bit)**: `splitwire-turkey-linux-amd64`
+            - **macOS (Apple Silicon/M1/M2)**: `splitwire-turkey-darwin-arm64`
+            
+            ### Installation Instructions
+            
+            #### Windows
+            1. Download `splitwire-turkey-windows-amd64.exe`
+            2. Right-click and select "Run as Administrator"
+            
+            #### Linux
+            1. Download `splitwire-turkey-linux-amd64`
+            2. Make it executable: `chmod +x splitwire-turkey-linux-amd64`
+            3. Run with sudo: `sudo ./splitwire-turkey-linux-amd64`
+            
+            #### macOS (Apple Silicon)
+            1. Download `splitwire-turkey-darwin-arm64`
+            2. Make it executable: `chmod +x splitwire-turkey-darwin-arm64`
+            3. Run with sudo: `sudo ./splitwire-turkey-darwin-arm64`
+            
+            ### Verifying Downloads
+            
+            You can verify the integrity of downloads using the provided checksums:
+            ```bash
+            sha256sum -c checksums.txt
+            ```
+            
+            For more information, see the [README](https://github.com/berkormanli/discord-dpi-turkey/blob/main/README_GO.md).
