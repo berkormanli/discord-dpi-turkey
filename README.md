@@ -14,6 +14,17 @@
 
 </div>
 
+---
+
+> **🎉 NEW: Go Version Available!**
+> 
+> This repository now includes a **cross-platform Go version** that works on Windows, Linux, and macOS!
+> 
+> - **C# Version** (Windows only): See instructions below
+> - **Go Version** (Cross-platform): See [README_GO.md](README_GO.md)
+
+---
+
 # SplitWire-Turkey
 
 **SplitWire-Turkey**, Türkiye'deki internet kullanıcıları için özel olarak tasarlanmış bir DPI aşımı ve tünelleme otomasyonu projesidir. İnternet bağlantı hızınızı etkilemeden kısıt aşımı yapmaya yarayan açık kaynak bir Windows uygulamasıdır. Bu araç, tek bir arayüzden birçok kısıt aşım yöntemini otomatik olarak kurmaya ve yönetmeye yarar. Hizmet kurulumu yaptığı için bilgisayarınızı yeniden başlattığınızda ilgili uygulamalara erişmek için fazladan bir işlem yapmanıza gerek kalmaz. Tamamen açık kaynak kodlu olan bu uygulamanın kaynak kodları repository'de bulunan /src klasörünün içinde mevcuttur.

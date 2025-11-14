@@ -1,0 +1,51 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.html
+
+# Go workspace file
+go.work
+
+# Build artifacts
+splitwire-turkey
+splitwire-turkey-*
+dist/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Configuration and logs (user-specific)
+config.json
+*.log
+
+# Temporary files
+/tmp/
+
+# C# build artifacts (from previous version)
+src/SplitWireTurkey/bin/
+src/SplitWireTurkey/obj/
+*.user
+*.suo
+*.cache
+packages/
+.vs/
+
+# Deployment artifacts
+deploy/*.exe
+deploy/*.msi
+deploy/*.zip
+!deploy/*.txt
