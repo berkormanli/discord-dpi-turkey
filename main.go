@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 	"github.com/berkormanli/discord-dpi-turkey/internal/config"
 	"github.com/berkormanli/discord-dpi-turkey/internal/gui"
 	"github.com/berkormanli/discord-dpi-turkey/internal/i18n"
