@@ -26,6 +26,58 @@
 - macOS 10.14 or later
 - Root privileges
 
+## Installation
+
+### Download Pre-built Releases (Recommended)
+
+Pre-built binaries are available for download from the [Releases page](https://github.com/berkormanli/discord-dpi-turkey/releases).
+
+#### Windows (64-bit)
+1. Download `splitwire-turkey-windows-amd64.exe` from the latest release
+2. Right-click the downloaded file and select "Run as Administrator"
+
+#### Linux (64-bit)
+1. Download `splitwire-turkey-linux-amd64` from the latest release
+2. Make it executable:
+   ```bash
+   chmod +x splitwire-turkey-linux-amd64
+   ```
+3. Run with sudo:
+   ```bash
+   sudo ./splitwire-turkey-linux-amd64
+   ```
+
+#### macOS (Apple Silicon)
+1. Download `splitwire-turkey-darwin-arm64` from the latest release
+2. Make it executable:
+   ```bash
+   chmod +x splitwire-turkey-darwin-arm64
+   ```
+3. Run with sudo:
+   ```bash
+   sudo ./splitwire-turkey-darwin-arm64
+   ```
+4. If you get a security warning, go to System Preferences > Security & Privacy and allow the app to run
+
+### Verify Download Integrity
+
+Each release includes a `checksums.txt` file. Verify your download:
+
+```bash
+sha256sum -c checksums.txt
+```
+
+Or verify a specific file:
+```bash
+# On Linux/macOS
+sha256sum splitwire-turkey-linux-amd64
+# Compare with checksum in checksums.txt
+
+# On Windows (PowerShell)
+Get-FileHash splitwire-turkey-windows-amd64.exe -Algorithm SHA256
+# Compare with checksum in checksums.txt
+```
+
 ## Building from Source
 
 ### Prerequisites
@@ -87,22 +139,6 @@ GOOS=linux GOARCH=amd64 go build -o splitwire-turkey
 #### Build for macOS from Linux/Windows
 ```bash
 GOOS=darwin GOARCH=amd64 go build -o splitwire-turkey
-```
-
-## Installation
-
-### Windows
-1. Download `splitwire-turkey.exe`
-2. Right-click and select "Run as Administrator"
-
-### Linux
-```bash
-sudo ./splitwire-turkey
-```
-
-### macOS
-```bash
-sudo ./splitwire-turkey
 ```
 
 ## Usage
