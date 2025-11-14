@@ -1,0 +1,168 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v2.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.platform }}
+    strategy:
+      matrix:
+        include:
+          - platform: Windows
+            os: windows-latest
+            goos: windows
+            goarch: amd64
+            output: splitwire-turkey-windows-amd64.exe
+          - platform: Linux
+            os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            output: splitwire-turkey-linux-amd64
+          - platform: macOS (Apple Silicon)
+            os: macos-latest
+            goos: darwin
+            goarch: arm64
+            output: splitwire-turkey-darwin-arm64
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.10'
+          cache: true
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev xorg-dev
+
+      - name: Install macOS dependencies
+        if: runner.os == 'macOS'
+        run: |
+          # Xcode Command Line Tools should already be installed on GitHub runners
+          echo "macOS dependencies check"
+
+      - name: Get version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build
+        env:
+          CGO_ENABLED: '1'
+        run: |
+          go build -ldflags="-s -w -X main.AppVersion=${{ steps.version.outputs.version }}" -o ${{ matrix.output }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.output }}
+          path: ${{ matrix.output }}
+          retention-days: 1
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Organize artifacts
+        run: |
+          mkdir -p release
+          find artifacts -type f -exec mv {} release/ \;
+          ls -la release/
+
+      - name: Create checksums
+        run: |
+          cd release
+          sha256sum * > checksums.txt
+          cat checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: release/*
+          body: |
+            ## SplitWire-Turkey ${{ steps.version.outputs.version }}
+            
+            ### Downloads
+            
+            - **Windows (64-bit)**: `splitwire-turkey-windows-amd64.exe`
+            - **Linux (64-bit)**: `splitwire-turkey-linux-amd64`
+            - **macOS (Apple Silicon/M1/M2)**: `splitwire-turkey-darwin-arm64`
+            
+            ### Installation Instructions
+            
+            #### Windows
+            1. Download `splitwire-turkey-windows-amd64.exe`
+            2. Right-click and select "Run as Administrator"
+            
+            #### Linux
+            1. Download `splitwire-turkey-linux-amd64`
+            2. Make it executable: `chmod +x splitwire-turkey-linux-amd64`
+            3. Run with sudo: `sudo ./splitwire-turkey-linux-amd64`
+            
+            #### macOS (Apple Silicon)
+            1. Download `splitwire-turkey-darwin-arm64`
+            2. Make it executable: `chmod +x splitwire-turkey-darwin-arm64`
+            3. Run with sudo: `sudo ./splitwire-turkey-darwin-arm64`
+            4. If you get a security warning, go to System Preferences > Security & Privacy and allow the app to run
+            
+            ### Verifying Downloads
+            
+            You can verify the integrity of downloads using the provided checksums:
+            ```bash
+            sha256sum -c checksums.txt
+            ```
+            
+            For more information, see the [README](https://github.com/berkormanli/discord-dpi-turkey/blob/main/README_GO.md).
