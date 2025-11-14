@@ -56,3 +56,9 @@ func (d *DNSManager) DisableDoH() error {
 	}
 	return d.disableDoHWindows()
 }
+
+// ResetDNS is a package-level function to reset DNS settings
+func ResetDNS() error {
+	dm := NewDNSManager()
+	return dm.ResetDNS()
+}

@@ -6,25 +6,25 @@ var turkishTranslations = map[string]string{
 	"app_version": "Sürüm",
 
 	// Main menu tabs
-	"tab_wiresock":  "WireSock",
-	"tab_byedpi":    "ByeDPI",
-	"tab_zapret":    "Zapret",
+	"tab_wiresock":   "WireSock",
+	"tab_byedpi":     "ByeDPI",
+	"tab_zapret":     "Zapret",
 	"tab_goodbyedpi": "GoodbyeDPI",
-	"tab_repair":    "Onarım",
-	"tab_advanced":  "Gelişmiş",
-	"tab_about":     "Hakkında",
+	"tab_repair":     "Onarım",
+	"tab_advanced":   "Gelişmiş",
+	"tab_about":      "Hakkında",
 
 	// Common buttons
-	"btn_install":         "Kur",
-	"btn_uninstall":       "Kaldır",
-	"btn_start":           "Başlat",
-	"btn_stop":            "Durdur",
-	"btn_close":           "Kapat",
-	"btn_save":            "Kaydet",
-	"btn_cancel":          "İptal",
-	"btn_browse":          "Gözat",
-	"btn_refresh":         "Yenile",
-	"btn_apply":           "Uygula",
+	"btn_install":   "Kur",
+	"btn_uninstall": "Kaldır",
+	"btn_start":     "Başlat",
+	"btn_stop":      "Durdur",
+	"btn_close":     "Kapat",
+	"btn_save":      "Kaydet",
+	"btn_cancel":    "İptal",
+	"btn_browse":    "Gözat",
+	"btn_refresh":   "Yenile",
+	"btn_apply":     "Uygula",
 
 	// WireSock tab
 	"ws_standard_install":    "WS Standart Kurulum",
@@ -37,10 +37,10 @@ var turkishTranslations = map[string]string{
 	"ws_custom_config":       "Özel Config Oluştur",
 
 	// ByeDPI tab
-	"byedpi_split_tunnel": "ByeDPI Split Tunneling Kurulum",
-	"byedpi_dll_install":  "ByeDPI DLL Kurulum",
+	"byedpi_split_tunnel":    "ByeDPI Split Tunneling Kurulum",
+	"byedpi_dll_install":     "ByeDPI DLL Kurulum",
 	"byedpi_tunnel_browsers": "Tarayıcılar için de tünelleme yap",
-	"byedpi_uninstall":    "ByeDPI'ı Kaldır",
+	"byedpi_uninstall":       "ByeDPI'ı Kaldır",
 
 	// Zapret tab
 	"zapret_auto_install":   "Zapret Otomatik Kurulum",
@@ -55,29 +55,29 @@ var turkishTranslations = map[string]string{
 	"zapret_edit_preset":    "Hazır Ayarı Düzenle",
 
 	// GoodbyeDPI tab
-	"gdpi_install":       "Hizmet Kur",
-	"gdpi_run_once":      "Tek Seferlik",
-	"gdpi_uninstall":     "GoodbyeDPI'ı Kaldır",
-	"gdpi_preset":        "Hazır Ayar:",
-	"gdpi_edit_preset":   "Hazır Ayarı Düzenle",
-	"gdpi_use_blacklist": "Blacklist Kullan",
+	"gdpi_install":        "Hizmet Kur",
+	"gdpi_run_once":       "Tek Seferlik",
+	"gdpi_uninstall":      "GoodbyeDPI'ı Kaldır",
+	"gdpi_preset":         "Hazır Ayar:",
+	"gdpi_edit_preset":    "Hazır Ayarı Düzenle",
+	"gdpi_use_blacklist":  "Blacklist Kullan",
 	"gdpi_edit_blacklist": "Blacklisti Düzenle",
 
 	// Repair tab
-	"repair_discord":         "Discord'u Onar",
-	"repair_install_ptb":     "Discord PTB Yükle",
-	"repair_clean_install":   "Discord PTB için temiz kurulum yap",
-	"repair_status_checks":   "Durum Kontrolleri:",
+	"repair_discord":          "Discord'u Onar",
+	"repair_install_ptb":      "Discord PTB Yükle",
+	"repair_clean_install":    "Discord PTB için temiz kurulum yap",
+	"repair_status_checks":    "Durum Kontrolleri:",
 	"repair_discord_standard": "Discord Standart:",
-	"repair_discord_ptb":     "Discord PTB:",
-	"repair_installed":       "Yüklü",
-	"repair_not_installed":   "Yüklü Değil",
+	"repair_discord_ptb":      "Discord PTB:",
+	"repair_installed":        "Yüklü",
+	"repair_not_installed":    "Yüklü Değil",
 
 	// Advanced tab
-	"advanced_services":        "Hizmetler:",
-	"advanced_remove_all":      "Tüm Hizmetleri Kaldır",
-	"advanced_reset_dns":       "DNS ve DoH Ayarlarını Geri Al",
-	"advanced_uninstall_app":   "SplitWire-Turkey'i Kaldır",
+	"advanced_services":      "Hizmetler:",
+	"advanced_remove_all":    "Tüm Hizmetleri Kaldır",
+	"advanced_reset_dns":     "DNS ve DoH Ayarlarını Geri Al",
+	"advanced_uninstall_app": "SplitWire-Turkey'i Kaldır",
 
 	// Status messages
 	"status_success":    "İşlem başarıyla tamamlandı",
@@ -88,10 +88,10 @@ var turkishTranslations = map[string]string{
 	"status_stopping":   "Durduruluyor...",
 
 	// Dialogs
-	"dialog_confirm":      "Onayla",
-	"dialog_warning":      "Uyarı",
-	"dialog_error":        "Hata",
-	"dialog_info":         "Bilgi",
+	"dialog_confirm":       "Onayla",
+	"dialog_warning":       "Uyarı",
+	"dialog_error":         "Hata",
+	"dialog_info":          "Bilgi",
 	"dialog_select_folder": "Klasör Seç",
 
 	// Messages

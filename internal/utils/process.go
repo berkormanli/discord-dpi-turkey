@@ -146,13 +146,13 @@ func (p *ProcessManager) findDiscordPathDarwin() (string, error) {
 // StartProcess starts a process with the given command and arguments
 func (p *ProcessManager) StartProcess(command string, args ...string) error {
 	cmd := exec.Command(command, args...)
-	
+
 	// Detach from parent process
 	if runtime.GOOS != "windows" {
 		cmd.SysProcAttr = &syscall.SysProcAttr{
 			Setpgid: true,
 		}
 	}
-	
+
 	return cmd.Start()
 }

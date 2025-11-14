@@ -1,10 +1,14 @@
 package gui
 
 import (
+	"fmt"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"github.com/berkormanli/discord-dpi-turkey/internal/config"
+	"github.com/berkormanli/discord-dpi-turkey/internal/dpi"
 	"github.com/berkormanli/discord-dpi-turkey/internal/i18n"
 )
 
@@ -13,13 +17,21 @@ type MainUI struct {
 	window fyne.Window
 	config *config.Config
 	tabs   *container.AppTabs
+	dpiMgr *dpi.DPIManager
 }
 
 // NewMainUI creates a new main UI
 func NewMainUI(window fyne.Window, cfg *config.Config) *MainUI {
+	dpiMgr, err := dpi.NewDPIManager(cfg)
+	if err != nil {
+		// Log error but continue - some features may not work
+		dpiMgr = nil
+	}
+
 	return &MainUI{
 		window: window,
 		config: cfg,
+		dpiMgr: dpiMgr,
 	}
 }
 
@@ -104,11 +116,27 @@ func (m *MainUI) refreshUI() {
 // buildWireSockTab creates the WireSock configuration tab
 func (m *MainUI) buildWireSockTab() fyne.CanvasObject {
 	standardBtn := widget.NewButton(i18n.T("ws_standard_install"), func() {
-		m.showInfo("WireSock Standard Installation - Coming Soon")
+		if m.dpiMgr == nil {
+			m.showError("Service manager not available")
+			return
+		}
+		if err := m.dpiMgr.InstallWireSockStandard(); err != nil {
+			m.showError(err.Error())
+		} else {
+			m.showInfo("WireSock Standard Installation completed successfully")
+		}
 	})
 
 	alternativeBtn := widget.NewButton(i18n.T("ws_alternative_install"), func() {
-		m.showInfo("WireSock Alternative Installation - Coming Soon")
+		if m.dpiMgr == nil {
+			m.showError("Service manager not available")
+			return
+		}
+		if err := m.dpiMgr.InstallWireSockAlternative(); err != nil {
+			m.showError(err.Error())
+		} else {
+			m.showInfo("WireSock Alternative Installation completed successfully")
+		}
 	})
 
 	browserCheck := widget.NewCheck(i18n.T("ws_tunnel_browsers"), func(checked bool) {
@@ -124,7 +152,7 @@ func (m *MainUI) buildWireSockTab() fyne.CanvasObject {
 		alternativeBtn,
 		browserCheck,
 		widget.NewButton(i18n.T("ws_customize_folders"), func() {
-			m.showInfo("Customize Folders - Coming Soon")
+			m.showInfo("Folder customization feature requires external binaries. This feature will be available after installing required tools.")
 		}),
 	)
 }
@@ -132,15 +160,39 @@ func (m *MainUI) buildWireSockTab() fyne.CanvasObject {
 // buildByeDPITab creates the ByeDPI configuration tab
 func (m *MainUI) buildByeDPITab() fyne.CanvasObject {
 	splitTunnelBtn := widget.NewButton(i18n.T("byedpi_split_tunnel"), func() {
-		m.showInfo("ByeDPI Split Tunneling - Coming Soon")
+		if m.dpiMgr == nil {
+			m.showError("Service manager not available")
+			return
+		}
+		if err := m.dpiMgr.InstallByeDPISplitTunnel(); err != nil {
+			m.showError(err.Error())
+		} else {
+			m.showInfo("ByeDPI Split Tunneling installed successfully")
+		}
 	})
 
 	dllInstallBtn := widget.NewButton(i18n.T("byedpi_dll_install"), func() {
-		m.showInfo("ByeDPI DLL Installation - Coming Soon")
+		if m.dpiMgr == nil {
+			m.showError("Service manager not available")
+			return
+		}
+		if err := m.dpiMgr.InstallByeDPIDLL(); err != nil {
+			m.showError(err.Error())
+		} else {
+			m.showInfo("ByeDPI DLL installation completed successfully")
+		}
 	})
 
 	uninstallBtn := widget.NewButton(i18n.T("byedpi_uninstall"), func() {
-		m.showInfo("Uninstall ByeDPI - Coming Soon")
+		if m.dpiMgr == nil {
+			m.showError("Service manager not available")
+			return
+		}
+		if err := m.dpiMgr.UninstallByeDPI(); err != nil {
+			m.showError(err.Error())
+		} else {
+			m.showInfo("ByeDPI uninstalled successfully")
+		}
 	})
 
 	return container.NewVBox(
@@ -165,57 +217,162 @@ func (m *MainUI) buildZapretTab() fyne.CanvasObject {
 		widget.NewLabel(i18n.T("tab_zapret")),
 		widget.NewSeparator(),
 		widget.NewButton(i18n.T("zapret_auto_install"), func() {
-			m.showInfo("Zapret Auto Install - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.InstallZapretAuto(scanSpeed.Selected); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("Zapret auto install completed successfully")
+			}
 		}),
 		container.NewHBox(
 			widget.NewLabel(i18n.T("zapret_scan_speed")),
 			scanSpeed,
 		),
 		widget.NewButton(i18n.T("zapret_preset_install"), func() {
-			m.showInfo("Zapret Preset Install - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.InstallZapretPreset("default"); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("Zapret preset install completed successfully")
+			}
 		}),
 		widget.NewButton(i18n.T("zapret_preset_once"), func() {
-			m.showInfo("Zapret Run Once - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.RunZapretOnce("default"); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("Zapret started temporarily")
+			}
 		}),
 		widget.NewButton(i18n.T("zapret_uninstall"), func() {
-			m.showInfo("Uninstall Zapret - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.UninstallZapret(); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("Zapret uninstalled successfully")
+			}
 		}),
 	)
 }
 
 // buildGoodbyeDPITab creates the GoodbyeDPI configuration tab
 func (m *MainUI) buildGoodbyeDPITab() fyne.CanvasObject {
+	useBlacklist := false
+	blacklistCheck := widget.NewCheck(i18n.T("gdpi_use_blacklist"), func(checked bool) {
+		useBlacklist = checked
+	})
+
 	return container.NewVBox(
 		widget.NewLabel(i18n.T("tab_goodbyedpi")),
 		widget.NewSeparator(),
 		widget.NewButton(i18n.T("gdpi_install"), func() {
-			m.showInfo("GoodbyeDPI Install - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.InstallGoodbyeDPI("default", useBlacklist); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("GoodbyeDPI installed successfully")
+			}
 		}),
 		widget.NewButton(i18n.T("gdpi_run_once"), func() {
-			m.showInfo("GoodbyeDPI Run Once - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.RunGoodbyeDPIOnce("default", useBlacklist); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("GoodbyeDPI started temporarily")
+			}
 		}),
-		widget.NewCheck(i18n.T("gdpi_use_blacklist"), nil),
+		blacklistCheck,
 		widget.NewButton(i18n.T("gdpi_uninstall"), func() {
-			m.showInfo("Uninstall GoodbyeDPI - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.UninstallGoodbyeDPI(); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("GoodbyeDPI uninstalled successfully")
+			}
 		}),
 	)
 }
 
 // buildRepairTab creates the repair tab
 func (m *MainUI) buildRepairTab() fyne.CanvasObject {
+	cleanInstall := false
+	cleanInstallCheck := widget.NewCheck(i18n.T("repair_clean_install"), func(checked bool) {
+		cleanInstall = checked
+	})
+
+	var standardStatus, ptbStatus *widget.Label
+	standardStatus = widget.NewLabel("")
+	ptbStatus = widget.NewLabel("")
+
+	updateStatus := func() {
+		if m.dpiMgr != nil {
+			standard, ptb := m.dpiMgr.GetDiscordStatus()
+			if standard {
+				standardStatus.SetText(i18n.T("repair_discord_standard") + " " + i18n.T("repair_installed"))
+			} else {
+				standardStatus.SetText(i18n.T("repair_discord_standard") + " " + i18n.T("repair_not_installed"))
+			}
+			if ptb {
+				ptbStatus.SetText(i18n.T("repair_discord_ptb") + " " + i18n.T("repair_installed"))
+			} else {
+				ptbStatus.SetText(i18n.T("repair_discord_ptb") + " " + i18n.T("repair_not_installed"))
+			}
+		}
+	}
+	updateStatus()
+
 	return container.NewVBox(
 		widget.NewLabel(i18n.T("tab_repair")),
 		widget.NewSeparator(),
 		widget.NewButton(i18n.T("repair_discord"), func() {
-			m.showInfo("Repair Discord - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.RepairDiscord(); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("Discord repair completed")
+				updateStatus()
+			}
 		}),
 		widget.NewButton(i18n.T("repair_install_ptb"), func() {
-			m.showInfo("Install Discord PTB - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.InstallDiscordPTB(cleanInstall); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("Discord PTB installation initiated")
+				updateStatus()
+			}
 		}),
-		widget.NewCheck(i18n.T("repair_clean_install"), nil),
+		cleanInstallCheck,
 		widget.NewLabel(i18n.T("repair_status_checks")),
-		widget.NewLabel(i18n.T("repair_discord_standard") + " " + i18n.T("repair_not_installed")),
-		widget.NewLabel(i18n.T("repair_discord_ptb") + " " + i18n.T("repair_not_installed")),
+		standardStatus,
+		ptbStatus,
 	)
 }
 
@@ -226,13 +383,29 @@ func (m *MainUI) buildAdvancedTab() fyne.CanvasObject {
 		widget.NewSeparator(),
 		widget.NewLabel(i18n.T("advanced_services")),
 		widget.NewButton(i18n.T("advanced_remove_all"), func() {
-			m.showInfo("Remove All Services - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.RemoveAllServices(); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("All services removed successfully")
+			}
 		}),
 		widget.NewButton(i18n.T("advanced_reset_dns"), func() {
-			m.showInfo("Reset DNS - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.ResetDNS(); err != nil {
+				m.showError(err.Error())
+			} else {
+				m.showInfo("DNS settings reset successfully")
+			}
 		}),
 		widget.NewButton(i18n.T("advanced_uninstall_app"), func() {
-			m.showInfo("Uninstall App - Coming Soon")
+			m.showInfo("To uninstall SplitWire-Turkey, please remove all services first, then delete the application using your system's package manager or manually delete the application files.")
 		}),
 	)
 }
@@ -251,18 +424,23 @@ func (m *MainUI) buildAboutTab() fyne.CanvasObject {
 			m.showInfo("GitHub: https://github.com/berkormanli/discord-dpi-turkey")
 		}),
 		widget.NewButton(i18n.T("about_logs_folder"), func() {
-			m.showInfo("Logs folder - Coming Soon")
+			if m.dpiMgr == nil {
+				m.showError("Service manager not available")
+				return
+			}
+			if err := m.dpiMgr.OpenLogsFolder(); err != nil {
+				m.showError(err.Error())
+			}
 		}),
 	)
 }
 
 // showInfo displays an information dialog
 func (m *MainUI) showInfo(message string) {
-	dialog := widget.NewLabel(message)
-	m.window.SetContent(container.NewVBox(
-		dialog,
-		widget.NewButton(i18n.T("btn_close"), func() {
-			m.window.SetContent(m.Build())
-		}),
-	))
+	dialog.ShowInformation("Information", message, m.window)
+}
+
+// showError displays an error dialog
+func (m *MainUI) showError(message string) {
+	dialog.ShowError(fmt.Errorf("%s", message), m.window)
 }

@@ -9,19 +9,19 @@ import (
 type ServiceManager interface {
 	// Install creates and installs a new service
 	Install(name, displayName, description, executable string, args []string) error
-	
+
 	// Uninstall removes a service
 	Uninstall(name string) error
-	
+
 	// Start starts a service
 	Start(name string) error
-	
+
 	// Stop stops a service
 	Stop(name string) error
-	
+
 	// Status returns the status of a service
 	Status(name string) (ServiceStatus, error)
-	
+
 	// List returns all managed services
 	List() ([]ServiceInfo, error)
 }

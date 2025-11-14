@@ -19,7 +19,7 @@ func newWindowsServiceManager() (ServiceManager, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to service manager: %w", err)
 	}
-	
+
 	return &windowsServiceManager{mgr: m}, nil
 }
 
