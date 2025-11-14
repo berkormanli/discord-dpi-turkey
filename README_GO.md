@@ -8,10 +8,14 @@
 - **Multiple DPI bypass methods**: WireSock, ByeDPI, Zapret, GoodbyeDPI
 - **Split tunneling**: Tunnel specific applications (Discord, browsers, etc.)
 - **Service management**: Automatic service installation and management
+- **Discord repair tools**: Repair Discord installation and install PTB version
+- **DNS management**: Reset DNS settings to automatic
 - **Multi-language support**: Turkish, English, Russian
 - **Dark/Light theme**: Customizable UI theme
 
 ## Requirements
+
+**Note**: The DPI bypass features (WireSock, ByeDPI, Zapret, GoodbyeDPI) require external binary tools to be installed separately. The application will guide you to the appropriate download locations.
 
 ### Windows
 - Windows 10/11
