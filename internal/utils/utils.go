@@ -17,7 +17,7 @@ func FindExecutable(name string) (string, error) {
 
 	// Platform-specific search paths
 	var searchPaths []string
-	
+
 	switch runtime.GOOS {
 	case "windows":
 		searchPaths = []string{
@@ -108,7 +108,7 @@ func CopyFile(src, dst string) error {
 // GetAppDataDir returns the application data directory
 func GetAppDataDir() string {
 	var appDataDir string
-	
+
 	switch runtime.GOOS {
 	case "windows":
 		appDataDir = filepath.Join(os.Getenv("LOCALAPPDATA"), "SplitWire-Turkey")
@@ -119,7 +119,7 @@ func GetAppDataDir() string {
 		home, _ := os.UserHomeDir()
 		appDataDir = filepath.Join(home, ".local", "share", "splitwire-turkey")
 	}
-	
+
 	return appDataDir
 }
 
@@ -134,7 +134,7 @@ func GetResourcesDir() string {
 			return resPath
 		}
 	}
-	
+
 	// Fallback to app data directory
 	return filepath.Join(GetAppDataDir(), "resources")
 }

@@ -55,18 +55,18 @@ func (d *DPIManager) InstallByeDPIDLL() error {
 func (d *DPIManager) UninstallByeDPI() error {
 	// Try to uninstall ByeDPI service if it exists
 	services := []string{"byedpi", "byedpi-split", "byedpi-dll"}
-	
+
 	var lastErr error
 	for _, svc := range services {
 		if err := d.serviceMgr.Uninstall(svc); err != nil {
 			lastErr = err
 		}
 	}
-	
+
 	if lastErr != nil {
 		return fmt.Errorf("failed to uninstall some ByeDPI services: %w", lastErr)
 	}
-	
+
 	return nil
 }
 
@@ -108,19 +108,19 @@ func (d *DPIManager) UninstallGoodbyeDPI() error {
 // RepairDiscord repairs Discord installation
 func (d *DPIManager) RepairDiscord() error {
 	pm := utils.NewProcessManager()
-	
+
 	// Check if Discord is running
 	running, _ := pm.IsProcessRunning("Discord")
 	if running {
 		return fmt.Errorf("please close Discord before repairing")
 	}
-	
+
 	// Find Discord installation
 	discordPath, err := pm.FindDiscordPath()
 	if err != nil {
 		return fmt.Errorf("Discord installation not found: %w", err)
 	}
-	
+
 	// Clear cache
 	var cacheDir string
 	switch runtime.GOOS {
@@ -133,13 +133,13 @@ func (d *DPIManager) RepairDiscord() error {
 		home, _ := os.UserHomeDir()
 		cacheDir = filepath.Join(home, ".config", "discord")
 	}
-	
+
 	if utils.DirExists(cacheDir) {
 		if err := os.RemoveAll(cacheDir); err != nil {
 			return fmt.Errorf("failed to clear Discord cache: %w", err)
 		}
 	}
-	
+
 	return fmt.Errorf("Discord repair completed. Cache cleared at %s. Discord path: %s. Manual reinstallation may be required", cacheDir, discordPath)
 }
 
@@ -150,7 +150,7 @@ func (d *DPIManager) InstallDiscordPTB(cleanInstall bool) error {
 		pm := utils.NewProcessManager()
 		pm.KillProcess("Discord")
 	}
-	
+
 	var downloadURL string
 	switch runtime.GOOS {
 	case "windows":
@@ -160,7 +160,7 @@ func (d *DPIManager) InstallDiscordPTB(cleanInstall bool) error {
 	default:
 		return fmt.Errorf("Discord PTB automatic installation not supported on this platform. Please download from https://discord.com/download")
 	}
-	
+
 	return fmt.Errorf("please download and install Discord PTB manually from: %s", downloadURL)
 }
 
@@ -170,18 +170,18 @@ func (d *DPIManager) RemoveAllServices() error {
 	if err != nil {
 		return fmt.Errorf("failed to list services: %w", err)
 	}
-	
+
 	var errors []error
 	for _, svc := range services {
 		if err := d.serviceMgr.Uninstall(svc.Name); err != nil {
 			errors = append(errors, fmt.Errorf("failed to uninstall %s: %w", svc.Name, err))
 		}
 	}
-	
+
 	if len(errors) > 0 {
 		return fmt.Errorf("failed to remove some services: %v", errors)
 	}
-	
+
 	return nil
 }
 
@@ -193,12 +193,12 @@ func (d *DPIManager) ResetDNS() error {
 // OpenLogsFolder opens the logs folder in file explorer
 func (d *DPIManager) OpenLogsFolder() error {
 	logsDir := config.GetLogsDir()
-	
+
 	// Ensure logs directory exists
 	if err := os.MkdirAll(logsDir, 0755); err != nil {
 		return fmt.Errorf("failed to create logs directory: %w", err)
 	}
-	
+
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "windows":
@@ -217,19 +217,19 @@ func (d *DPIManager) OpenLogsFolder() error {
 			return fmt.Errorf("no file manager found. Logs directory: %s", logsDir)
 		}
 	}
-	
+
 	return cmd.Start()
 }
 
 // GetDiscordStatus checks if Discord is installed and returns status
 func (d *DPIManager) GetDiscordStatus() (standardInstalled, ptbInstalled bool) {
 	pm := utils.NewProcessManager()
-	
+
 	// Check standard Discord
 	if _, err := pm.FindDiscordPath(); err == nil {
 		standardInstalled = true
 	}
-	
+
 	// Check Discord PTB
 	var ptbPaths []string
 	switch runtime.GOOS {
@@ -240,13 +240,13 @@ func (d *DPIManager) GetDiscordStatus() (standardInstalled, ptbInstalled bool) {
 	default:
 		ptbPaths = []string{"/usr/bin/discord-ptb", "/opt/discord-ptb"}
 	}
-	
+
 	for _, path := range ptbPaths {
 		if utils.DirExists(path) {
 			ptbInstalled = true
 			break
 		}
 	}
-	
+
 	return standardInstalled, ptbInstalled
 }

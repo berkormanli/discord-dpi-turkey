@@ -9,12 +9,12 @@ import (
 
 // Config holds application configuration
 type Config struct {
-	Language      string   `json:"language"`       // TR, EN, RU
+	Language      string   `json:"language"` // TR, EN, RU
 	IsDarkMode    bool     `json:"isDarkMode"`
 	LastUpdated   string   `json:"lastUpdated"`
 	Version       string   `json:"version"`
-	CustomFolders []string `json:"customFolders"`  // For custom tunneling
-	BrowserTunnel bool     `json:"browserTunnel"`  // Tunnel browsers too
+	CustomFolders []string `json:"customFolders"` // For custom tunneling
+	BrowserTunnel bool     `json:"browserTunnel"` // Tunnel browsers too
 }
 
 // Default returns default configuration
@@ -31,7 +31,7 @@ func Default() *Config {
 // Load reads configuration from disk
 func Load() (*Config, error) {
 	configPath := getConfigPath()
-	
+
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -51,7 +51,7 @@ func Load() (*Config, error) {
 // Save writes configuration to disk
 func (c *Config) Save() error {
 	configPath := getConfigPath()
-	
+
 	// Ensure config directory exists
 	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
 		return err

@@ -2,7 +2,7 @@ package gui
 
 import (
 	"fmt"
-	
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
@@ -14,10 +14,10 @@ import (
 
 // MainUI represents the main application UI
 type MainUI struct {
-	window  fyne.Window
-	config  *config.Config
-	tabs    *container.AppTabs
-	dpiMgr  *dpi.DPIManager
+	window fyne.Window
+	config *config.Config
+	tabs   *container.AppTabs
+	dpiMgr *dpi.DPIManager
 }
 
 // NewMainUI creates a new main UI
@@ -27,7 +27,7 @@ func NewMainUI(window fyne.Window, cfg *config.Config) *MainUI {
 		// Log error but continue - some features may not work
 		dpiMgr = nil
 	}
-	
+
 	return &MainUI{
 		window: window,
 		config: cfg,
@@ -273,7 +273,7 @@ func (m *MainUI) buildGoodbyeDPITab() fyne.CanvasObject {
 	blacklistCheck := widget.NewCheck(i18n.T("gdpi_use_blacklist"), func(checked bool) {
 		useBlacklist = checked
 	})
-	
+
 	return container.NewVBox(
 		widget.NewLabel(i18n.T("tab_goodbyedpi")),
 		widget.NewSeparator(),
@@ -320,11 +320,11 @@ func (m *MainUI) buildRepairTab() fyne.CanvasObject {
 	cleanInstallCheck := widget.NewCheck(i18n.T("repair_clean_install"), func(checked bool) {
 		cleanInstall = checked
 	})
-	
+
 	var standardStatus, ptbStatus *widget.Label
 	standardStatus = widget.NewLabel("")
 	ptbStatus = widget.NewLabel("")
-	
+
 	updateStatus := func() {
 		if m.dpiMgr != nil {
 			standard, ptb := m.dpiMgr.GetDiscordStatus()
@@ -341,7 +341,7 @@ func (m *MainUI) buildRepairTab() fyne.CanvasObject {
 		}
 	}
 	updateStatus()
-	
+
 	return container.NewVBox(
 		widget.NewLabel(i18n.T("tab_repair")),
 		widget.NewSeparator(),

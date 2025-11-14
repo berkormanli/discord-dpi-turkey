@@ -85,7 +85,7 @@ func (d *DNSManager) getActiveInterfaceWindows() (string, error) {
 	// Parse output to find connected interface
 	// For now, use a common default
 	_ = output
-	
+
 	// Common interface names
 	commonNames := []string{
 		"Ethernet",
